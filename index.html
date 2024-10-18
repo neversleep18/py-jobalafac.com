@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recherche de stages et alternances</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #ffffff;
+            --text-color: #333333;
+            --primary-color: #4353FF;
+            --secondary-color: #F0F0F0;
+        }
+
+        .dark-mode {
+            --bg-color: #1a1a1a;
+            --text-color: #ffffff;
+            --primary-color: #6171FF;
+            --secondary-color: #2a2a2a;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: background-color 0.3s, color 0.3s;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 30px;
+        }
+
+        .search-container {
+            display: flex;
+            margin-bottom: 30px;
+        }
+
+        input[type="text"] {
+            flex-grow: 1;
+            padding: 10px;
+            font-size: 1em;
+            border: 1px solid var(--secondary-color);
+            border-radius: 5px 0 0 5px;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 1em;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 0 5px 5px 0;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #3242ee;
+        }
+
+        #results {
+            display: grid;
+            gap: 20px;
+        }
+
+        .job-card {
+            background-color: var(--secondary-color);
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .job-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .job-company {
+            font-size: 0.9em;
+            color: var(--primary-color);
+        }
+
+        .toggle-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: var(--primary-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Recherche de stages et alternances</h1>
+        <div class="search-container">
+            <input type="text" id="keyword" placeholder="Mot-clé">
+            <button onclick="search()">Rechercher</button>
+        </div>
+        <div id="results"></div>
+    </div>
+
+    <div class="toggle-container">
+        <label class="toggle-switch">
+            <input type="checkbox" id="mode-toggle">
+            <span class="slider"></span>
+        </label>
+    </div>
+
+    <script>
+    function search() {
+        var keyword = document.getElementById('keyword').value;
+        fetch('/search?keyword=' + keyword)
+            .then(response => response.json())
+            .then(data => {
+                var resultsDiv = document.getElementById('results');
+                resultsDiv.innerHTML = '';
+                data.forEach(job => {
+                    resultsDiv.innerHTML += `
+                        <div class="job-card">
+                            <div class="job-title">${job.title}</div>
+                            <div class="job-company">${job.company}</div>
+                        </div>
+                    `;
+                });
+            });
+    }
+
+    document.getElementById('mode-toggle').addEventListener('change', function() {
+        document.body.classList.toggle('dark-mode');
+    });
+    </script>
+</body>
+</html>
